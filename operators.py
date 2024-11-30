@@ -12,5 +12,6 @@ def multiply(a: float, b: float) -> float:
 
 def divide(a: float, b: float) -> float:
     if b == 0:
-        raise ValueError("Cannot divide by zero.")
+        msg: str = "Cannot divide by zero"
+        raise ValueError("{}".format(msg))
     return a / b
