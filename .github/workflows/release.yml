@@ -1,0 +1,77 @@
+name: Create Release Tag
+
+# Trigger on push to main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Extract version from pyproject.toml
+      - name: Extract version from pyproject.toml
+        id: get_version
+        run: |
+          # Extract the version from pyproject.toml
+          version=$(grep -oP '^version\s*=\s*"\K[^\"]+' pyproject.toml)
+          echo "VERSION=$version" >> $GITHUB_ENV
+          echo "Parsed version: $version"
+
+      # Step 3: Check if the tag already exists
+      - name: Check if tag already exists
+        id: check_tag
+        run: |
+          # Check if the tag exists in the remote repository
+          if git ls-remote --tags origin | grep -q "refs/tags/v${{ env.VERSION }}"; then
+            echo "Tag v${{ env.VERSION }} already exists."
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
+
+      # Step 4: Create a Git tag (only if it doesn't already exist)
+      - name: Create Git tag
+        if: env.TAG_EXISTS == 'false'
+        env:
+          VERSION: ${{ env.VERSION }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create the tag and push it
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
+
+      # Step 5: Generate release notes
+      - name: Generate release notes
+        if: env.TAG_EXISTS == 'false'
+        id: generate_release_notes
+        run: |
+          # Generate release notes dynamically (basic example)
+          echo "Release Notes for version v${{ env.VERSION }}" > release_notes.txt
+          echo "- Feature A implemented" >> release_notes.txt
+          echo "- Bug fix B resolved" >> release_notes.txt
+          cat release_notes.txt
+
+      # Step 6: Create GitHub release
+      - name: Create GitHub release
+        if: env.TAG_EXISTS == 'false'
+        uses: actions/create-release@v1
+        with:
+          tag_name: "v${{ env.VERSION }}"
+          release_name: "Release v${{ env.VERSION }}"
+          body_path: release_notes.txt
+          draft: false
+          prerelease: false
+
+      # Step 7: Skip tagging if the version already exists
+      - name: Skip creating a release
+        if: env.TAG_EXISTS == 'true'
+        run: |
+          echo "Skipping tag creation and release: Tag v${{ env.VERSION }} already exists."
