@@ -33,7 +33,9 @@ jobs:
             echo "Tag v${{ env.VERSION }} already exists."
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
+            echo "Tag v${{ env.VERSION }} does not exist."
             echo "TAG_EXISTS=false" >> $GITHUB_ENV
+          fi
 
       # Step 4: Create a Git tag (only if it doesn't already exist)
       - name: Create Git tag
