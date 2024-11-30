@@ -71,6 +71,8 @@ jobs:
           body_path: release_notes.txt
           draft: false
           prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Step 7: Skip tagging if the version already exists
       - name: Skip creating a release
