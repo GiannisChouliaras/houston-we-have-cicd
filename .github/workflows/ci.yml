@@ -32,7 +32,7 @@ jobs:
 
       # Step 4: Run linting
       - name: Run flake8
-        run: flake8 operators tests
+        run: flake8 operators.py tests
 
       # Step 5: Run tests
       - name: Run pytest
