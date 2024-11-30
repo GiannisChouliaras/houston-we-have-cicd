@@ -1,7 +1,7 @@
 ## New Features
 
-- **Feature 1**: Adding configuration
+- **Feature 1**: Adding Contributors
 
-## Bug Fixes
+## Contributors
 
-- No bugs but only to check the bullet list
+- @GiannisChouliaras
