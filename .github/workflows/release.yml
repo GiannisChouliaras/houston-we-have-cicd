@@ -51,15 +51,6 @@ jobs:
           git push origin "v$VERSION"
 
       # Step 5: Generate release notes
-      - name: Generate release notes
-        if: env.TAG_EXISTS == 'false'
-        id: generate_release_notes
-        run: |
-          # Generate release notes dynamically (basic example)
-          echo "Release Notes for version v${{ env.VERSION }}" > release_notes.txt
-          echo "- Feature A implemented" >> release_notes.txt
-          echo "- Bug fix B resolved" >> release_notes.txt
-          cat release_notes.txt
 
       # Step 6: Create GitHub release
       - name: Create GitHub release
@@ -68,7 +59,7 @@ jobs:
         with:
           tag_name: "v${{ env.VERSION }}"
           release_name: "Release v${{ env.VERSION }}"
-          body_path: release_notes.txt
+          body_path: release_notes.md
           draft: false
           prerelease: false
         env:
